@@ -1,9 +1,13 @@
 // import useCentralDeAcesso from "../../data/hook/useCentralDeAcesso"
-import usuario from "@/components/data/constants/usuarioFalso";
+
+import { useContext } from "react";
+import AutenticacaoContext from "../data/contexts/AutenticacaoContext";
 
 // https://unicode-table.com/en/1F44B/
 
 export default function BoasVindas() {
+  const { usuario } = useContext(AutenticacaoContext);
+
   function renderizarNome() {
     return (
       <span className="hidden sm:inline">{usuario?.nome?.split(" ")[0]}</span>

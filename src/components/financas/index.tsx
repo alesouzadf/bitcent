@@ -3,17 +3,20 @@ import Cabecalho from "../templates/Cabecalho";
 import Conteudo from "../templates/Conteudo";
 import Pagina from "../templates/Pagina";
 import Lista from "@/components/financas/lista";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import transacoesFalsas from "../data/constants/transacoesFalsas";
 import Formulario from "./Formulario";
 import NaoEncontrado from "../templates/NaoEncontrado";
 import Id from "@/logic/comum/id";
 import { Button } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
+import ServicoTransacao from "@/logic/core/financas/ServicoTransacao";
+import AutenticacaoContext from "../data/contexts/AutenticacaoContext";
 
 export default function Financas() {
   const [transacoes, setTransacoes] = useState<Transacao[]>(transacoesFalsas);
   const [transacao, setTransacao] = useState<Transacao | null>(null);
+  const { usuario } = useContext(AutenticacaoContext);
 
   function salvar(transacao: Transacao) {
     const outrasTransacoes = transacoes.filter((t) => t.id !== transacao.id);
@@ -24,6 +27,7 @@ export default function Financas() {
         id: transacao.id ?? Id.novo(),
       },
     ]);
+    if (usuario) new ServicoTransacao().salvar(transacao, usuario);
     setTransacao(null);
   }
 

@@ -21,8 +21,8 @@ export default class Autenticacao {
   }
 
   async loginGoogle(): Promise<Usuario | null> {
-    const resp = signInWithPopup(this._auth, new GoogleAuthProvider());
-    return this.usuarioNormalizado((await resp).user);
+    const resp = await signInWithPopup(this._auth, new GoogleAuthProvider());
+    return this.usuarioNormalizado(resp.user);
   }
 
   async logout(): Promise<void> {
