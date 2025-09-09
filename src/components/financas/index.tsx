@@ -1,41 +1,16 @@
-import Transacao, { transacaoVazia } from "@/logic/core/financas/Transacao";
 import Cabecalho from "../templates/Cabecalho";
 import Conteudo from "../templates/Conteudo";
 import Pagina from "../templates/Pagina";
 import Lista from "@/components/financas/lista";
-import { useContext, useState } from "react";
-import transacoesFalsas from "../data/constants/transacoesFalsas";
 import Formulario from "./Formulario";
 import NaoEncontrado from "../templates/NaoEncontrado";
-import Id from "@/logic/comum/id";
 import { Button } from "@mantine/core";
 import { IconPlus } from "@tabler/icons-react";
-import ServicoTransacao from "@/logic/core/financas/ServicoTransacao";
-import AutenticacaoContext from "../data/contexts/AutenticacaoContext";
+import useTransacao from "../data/hooks/useTransacao";
+import { transacaoVazia } from "@/logic/core/financas/Transacao";
 
 export default function Financas() {
-  const [transacoes, setTransacoes] = useState<Transacao[]>(transacoesFalsas);
-  const [transacao, setTransacao] = useState<Transacao | null>(null);
-  const { usuario } = useContext(AutenticacaoContext);
-
-  function salvar(transacao: Transacao) {
-    const outrasTransacoes = transacoes.filter((t) => t.id !== transacao.id);
-    setTransacoes([
-      ...outrasTransacoes,
-      {
-        ...transacao,
-        id: transacao.id ?? Id.novo(),
-      },
-    ]);
-    if (usuario) new ServicoTransacao().salvar(transacao, usuario);
-    setTransacao(null);
-  }
-
-  function exlcuir(transacao: Transacao) {
-    const outrasTransacoes = transacoes.filter((t) => t.id !== transacao.id);
-    setTransacoes(outrasTransacoes);
-    setTransacao(null);
-  }
+  const { transacoes, transacao, salvar, selecionar, excluir } = useTransacao();
 
   return (
     <Pagina>
@@ -44,7 +19,7 @@ export default function Financas() {
         <Button
           className="bg-blue-500"
           leftIcon={<IconPlus />}
-          onClick={() => setTransacao(transacaoVazia)}
+          onClick={() => selecionar(transacaoVazia)}
         >
           Nova Transacao
         </Button>
@@ -52,11 +27,11 @@ export default function Financas() {
           <Formulario
             transacao={transacao}
             salvar={salvar}
-            exlcuir={exlcuir}
-            cancelar={() => setTransacao(null)}
+            exlcuir={excluir}
+            cancelar={() => selecionar(null)}
           ></Formulario>
         ) : transacoes.length ? (
-          <Lista transacoes={transacoes} selecionarTransacao={setTransacao} />
+          <Lista transacoes={transacoes} selecionarTransacao={selecionar} />
         ) : (
           <NaoEncontrado>Nenhuma transação encontrada</NaoEncontrado>
         )}

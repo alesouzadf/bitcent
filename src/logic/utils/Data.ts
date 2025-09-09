@@ -13,5 +13,11 @@ export default class Data {
       const ano = partes[2] ? +partes[2] : hoje.getFullYear();
       return new Date(ano, mes, dia);
     },
+    primeiroDia(date: Date): Date {
+      return new Date(date.getFullYear(), date.getMonth(), 1);
+    },
+    ultimoDia(date: Date): Date {
+      return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    },
   };
 }
